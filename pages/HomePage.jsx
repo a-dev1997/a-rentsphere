@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet,ActivityIndicator } from "react-native";
 
 import Header from "../component/header";
 import { useEffect, useState, useCallback } from "react";
@@ -13,7 +13,8 @@ const Home = () => {
     const [list, setList] = useState(null);
     const dispatch = useDispatch();
     // Initialize wishlist state
-    const [wishlist, setWishlist] = useState([]);
+    // const [isInWishlist, setisInWishlist] = useState();
+    const [wishlistLoading,setWishlistLoading]=useState(false)
     const [heard, setHeart] = useState();
     const { data, status } = useSelector((state) => state.userInfo);
     // let [name,setName]=useState();
@@ -46,10 +47,10 @@ const Home = () => {
     }
     // Check if property is in wishlist
     const isPropertyInWishlist = (propertyId) => {
-        if(list!=null){
+        if (list != null) {
             return list.some(item => item.property_id == propertyId);
         }
-        
+
     };
     const getList = async (user1) => {
         // Assuming `id` is defined somewhere and contains an `id` property
@@ -59,7 +60,7 @@ const Home = () => {
         // console.log(user_id)
 
         // Sending the POST request with the user_id wrapped in a JSON object
-        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist/${user_id}`).then((res) => res.json()).then((result) => { setList(result.data);}).catch((err) => console.log(err))
+        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist/${user_id}`).then((res) => res.json()).then((result) => { setList(result.data); }).catch((err) => console.log(err))
     }
     const removeProperty = async (property_id, user_id) => {
         await fetch(`https://rentsphere.onavinfosolutions.com/api/remove-property/${property_id}/${user_id}`).then((res) => res.json()).then((result) => { setCount(count + 1) }).catch((err) => console.log(err))
@@ -71,13 +72,13 @@ const Home = () => {
             getProperty()
             getCategory()
             dispatch(fetchUserData());
-    
+
         }, [count]) // Callback ensures this runs only on focus
     );
 
     useEffect(() => {
         if (status === "succeeded" && data?.result?.data) {
-            
+
             // console.log(data.result.data.id)
             setUser(data.result.data.id);
             //  console.log(user)
@@ -85,11 +86,11 @@ const Home = () => {
             getList(user)
             console.log(list)
         }
-        
-    //    console.log(checkconnectivity());
+
+        //    console.log(checkconnectivity());
     }, [data, user])
 
-    
+
 
     return (
 
@@ -159,24 +160,37 @@ const Home = () => {
                     {propery?.data?.map((propty) => {
                         // console.log(propty)
                         const isInWishlist = isPropertyInWishlist(propty.id);
+                        const handleWishlistToggle = (propertyId) => {
+                            setWishlistLoading(prevState => ({ ...prevState, [propertyId]: true }));
+
+                            if (isInWishlist) {
+                                removeProperty(propertyId, user).finally(() => {
+                                    setWishlistLoading(prevState => ({ ...prevState, [propertyId]: false }));
+                                });
+                            } else {
+                                addWishlist(user, propertyId).finally(() => {
+                                    setWishlistLoading(prevState => ({ ...prevState, [propertyId]: false }));
+                                });
+                            }
+                        };
+
                         return (
                             <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.id }) }} key={propty.id} style={styles.propertyView}>
 
 
                                 <TouchableOpacity
-                                    onPress={() => {
-                                        if (isInWishlist) {
-                                            removeProperty(propty.id,user);
-                                        } else {
-                                            addWishlist(user, propty.id);
-                                        }
-                                    }}
+                                    key={propty.id}
+                                    onPress={() => handleWishlistToggle(propty.id)}
                                     style={{ position: "absolute", top: 18, right: 10, zIndex: 20 }}
                                 >
-                                    <Image
-                                        source={isInWishlist ? require('../assets/images/heartred.png') : require('../assets/images/heartwhite.png')}
-                                        style={{ width: 25, height: 25 }}
-                                    />
+                                    {wishlistLoading[propty.id] ? (
+                                        <ActivityIndicator />
+                                    ) : (
+                                        <Image
+                                            source={isInWishlist ? require('../assets/images/heartred.png') : require('../assets/images/heartwhite.png')}
+                                            style={{ width: 25, height: 25 }}
+                                        />
+                                    )}
                                 </TouchableOpacity>
 
 
@@ -219,7 +233,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-center',
         marginVertical: 5,
-        marginHorizontal:1,
+        marginHorizontal: 1,
         position: 'relative'
 
     },
