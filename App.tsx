@@ -1,118 +1,63 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { Text } from "react-native";
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import SplashScreen from "./pages/SplashScreen";
+import { NavigationContainer,useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./pages/HomePage";
+import BottomNav from './component/Footer';
+import PropertyView from './pages/PropertyView';
+import Login from './pages/LoginPage';
+import Header from './component/header';
+import { Provider } from 'react-redux';
+import store from './reduxstore/store';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import EditProfile from './pages/EditProfile';
+import PropertyForm from './pages/PropertyForm';
+import Wishlist from './pages/Wishlist';
+import MyProperty from './pages/MyProperty';
+import UpdateProperty from './pages/UpdateProperty';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+const App=()=>{
+
+
+  return(
+    
+      <GestureHandlerRootView>
+
+      <Provider store={store}>
+  <NavigationContainer>
+  <StackPages/>
+
+  </NavigationContainer>
+  </Provider>
+  </GestureHandlerRootView>
   );
 }
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
 export default App;
+
+
+  const StackPages=()=>{
+    const Stack=createNativeStackNavigator();
+    return(
+      <Stack.Navigator screenOptions={{
+       headerShown:false
+      }}>
+      <Stack.Screen options={{headerShown:false}}  name="splash" component={SplashScreen}/>
+      <Stack.Screen name="bottomtab" component={BottomNav}/>
+      <Stack.Screen options={{headerShown:true,
+        headerStyle:{backgroundColor:'#1C183D'},
+        headerTintColor:'white',
+        headerTitleAlign:'center'
+        
+        }} name='Property' component={PropertyView}  />
+        <Stack.Screen options={{headerShown:false}} name="Login" component={Login} />
+        <Stack.Screen name='Edit Profile' component={EditProfile} />
+        <Stack.Screen  name='PropertyAdd' component={PropertyForm} />
+        <Stack.Screen name='Wishlist' component={Wishlist} />
+        <Stack.Screen name='My Property' component={MyProperty}/>
+        <Stack.Screen name='Update Property' component={UpdateProperty} />
+    </Stack.Navigator>
+    )
+  }
