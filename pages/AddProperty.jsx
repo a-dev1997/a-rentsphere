@@ -12,6 +12,7 @@ const nav=useNavigation()
          setCat(result.data)
          console.log(result)
          console.log(cat)
+         console.log('changes')
         })
     }
 
