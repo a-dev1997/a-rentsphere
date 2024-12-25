@@ -48,6 +48,8 @@ const nav=useNavigation()
         </View>
      
 </View>
+
+
         </ScrollView>
     )
 }
