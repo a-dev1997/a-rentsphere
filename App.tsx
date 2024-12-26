@@ -17,6 +17,7 @@ import PropertyForm from './pages/PropertyForm';
 import Wishlist from './pages/Wishlist';
 import MyProperty from './pages/MyProperty';
 import UpdateProperty from './pages/UpdateProperty';
+import Message from './pages/MessagePage';
 
 
 const App=()=>{
@@ -58,6 +59,7 @@ export default App;
         <Stack.Screen name='Wishlist' component={Wishlist} />
         <Stack.Screen name='My Property' component={MyProperty}/>
         <Stack.Screen name='Update Property' component={UpdateProperty} />
+        {/* <Stack.Screen options={{headerShown:true}} name='Message' component={Message} /> */}
     </Stack.Navigator>
     )
   }

@@ -1,23 +1,34 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
-
+import { useSelector,useDispatch } from "react-redux";
+import { fetchCatData } from "../reduxstore/getcatslice";
 
 const AddProperty=()=>{
     let [cat,setCat]=useState();
+    const dispatch=useDispatch()
+    const {catData,catStatus}=useSelector((state)=>state.category);
+    console.log(catData)
 const nav=useNavigation()
 
-    const getCategory =async()=>{
-        await fetch('https://rentsphere.onavinfosolutions.com/api/property-category').then((res)=>res.json()).then((result)=>{
-         setCat(result.data)
-         console.log(result)
-         console.log(cat)
+    // const getCategory =async()=>{
+    //     await fetch('https://rentsphere.onavinfosolutions.com/api/property-category').then((res)=>res.json()).then((result)=>{
+    //      setCat(result.data)
+    //      console.log(result)
+    //      console.log(cat)
          
-        })
-    }
+    //     })
+    // }
 
     useEffect(()=>{
-            getCategory()
+            // getCategory()
+            dispatch(fetchCatData())
+            
+            if(catStatus=='succeeded'){
+                setCat(catData.data)
+                // console.log(catData)
+            }
+
     },[])
     return(
         <ScrollView>

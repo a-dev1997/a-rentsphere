@@ -6,6 +6,7 @@ import { useSelector,useDispatch } from "react-redux";
 import { fetchStates } from "../reduxstore/getstatesSlice";
 import { Picker } from "@react-native-picker/picker";
 import { fetchCatData } from "../reduxstore/getcatslice";
+import DocumentPicker from 'react-native-document-picker'
 const UpdateProperty=()=>{
     const nav = useNavigation();
     const route = useRoute();
@@ -135,7 +136,7 @@ setImages(res)
 
 
   const handleSubmit=async()=>{
-
+ console.log('dfjd')
     const formData= new FormData();
 
     // images.forEach((file, index) => {
@@ -146,7 +147,13 @@ setImages(res)
     //   });
     // });
 
-    formData.append('images',images)  
+    images.forEach((image) => {
+      formData.append('images[]', {
+        uri: image.uri,
+        type: image.type,
+        name: image.name,
+      });
+    });
     
     formData.append("feature_image",featureimg[0])
       
@@ -183,7 +190,7 @@ setImages(res)
     formData.append('user_id',data.result.data.id)
 // console.log(data.result.data.id)
 console.log(formData)
-    fetch('https://rentsphere.onavinfosolutions.com/api/property-added-to-user', {
+    fetch('https://rentsphere.onavinfosolutions.com/api/update-property', {
       method: 'post',
       body: formData,
       headers: {
@@ -367,9 +374,9 @@ console.log(formData)
                       <Text style={{ textAlign: 'center', color: 'white' }}>update Image</Text>
         
                     </TouchableOpacity>
-                    <View style={{ height: 200, width: 200, borderWidth: 1, borderColor: 'gray', borderRadius: 10, overflow: 'hidden' }}>
+                    <View style={{ height: 200, width:300, borderWidth: 1, borderColor: 'gray', borderRadius: 10, overflow: 'hidden' }}>
                       {
-                        featureimg != null ? <Image source={{ uri: `https://rentsphere.onavinfosolutions.com/public/uploads/propertyImages/${featureimg}` }} style={{ height: 200, width: 200, objectFit: 'cover' }} /> : <Text style={{ textAlign: 'center' }}>Preview</Text>
+                        featureimg != null ? <Image source={{ uri: `https://rentsphere.onavinfosolutions.com/public/uploads/propertyImages/${featureimg}` }} style={{ height: 200, width: 300, objectFit: 'cover' }} /> : <Text style={{ textAlign: 'center' }}>Preview</Text>
                       }
         
                     </View>
@@ -383,13 +390,13 @@ console.log(formData)
                       <Text style={{ textAlign: 'center', color: 'white' }}>Add Image</Text>
         
                     </TouchableOpacity>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', margin: 20 }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', margin: 20,borderWidth:1,borderColor:'black',padding:10,borderRadius:5}}>
                       {
         
                         images.length ? images?.map((val, index) => {
         
                           return (
-                            <View key={index} > <Image source={{ uri:`https://rentsphere.onavinfosolutions.com/public/uploads/propertyImages/${val}` }} style={{ height: 100, width: 100, objectFit: 'cover' }} />
+                            <View key={index} style={{flexBasis:100,flexGrow:1,marginBottom:10}} > <Image source={{ uri:`https://rentsphere.onavinfosolutions.com/public/uploads/propertyImages/${val}` }} style={{ height:100, width: 100, objectFit: 'cover' }} />
         
                               <Button onPress={() => { removeImage(index) }} title="delete" />
                             </View>

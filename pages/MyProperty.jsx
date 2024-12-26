@@ -1,4 +1,4 @@
-import { ScrollView, Text, Image, View, Button, ActivityIndicator, TouchableOpacity, StyleSheet } from "react-native"
+import { ScrollView, Text, Image, View, Button, ActivityIndicator, TouchableOpacity, StyleSheet ,Alert} from "react-native"
 import { useRoute, useNavigation } from "@react-navigation/native"
 import { useEffect, useState } from "react";
 
@@ -8,15 +8,45 @@ const MyProperty = () => {
     const route = useRoute();
     const [list, setList] = useState(null)
     const { id } = route.params;
-
+    let [count,setCount]=useState(1);
     const getMyProp = async () => {
         await fetch(`https://rentsphere.onavinfosolutions.com/api/my-properties/${id.id}`).then((res) => res.json()).then((result) => { setList(result.data); console.log(result) }).catch((err) => console.log(err))
 
     }
-
+    const deleteProperty = async (id) => {
+        // Ask for confirmation
+        Alert.alert(
+          'Are you sure?',
+          'Do you really want to delete this property?',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: async () => {
+                try {
+                  // Proceed with the API call if user confirms
+                  const response = await fetch(`https://rentsphere.onavinfosolutions.com/api/delete-my-property/${id}`);
+                  const result = await response.json();
+                  console.log(result.message);
+      
+                  // Update the count or perform other actions after the delete
+                  setCount(count + 1);
+                } catch (error) {
+                  console.error('Error deleting property:', error);
+                }
+              },
+            },
+          ],
+          { cancelable: false } // The dialog cannot be dismissed by tapping outside it
+        );
+      };
     useEffect(() => {
         getMyProp()
-    }, [])
+    }, [count])
 
     return (
         <ScrollView >
@@ -51,7 +81,7 @@ const MyProperty = () => {
 
                                         <Text style={{ color: 'white', fontWeight: 'bold' }}>edit</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={{ backgroundColor: 'red', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 5 }} onPress={() => { removeProperty(propty.id) }}>
+                                    <TouchableOpacity style={{ backgroundColor: 'red', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 5 }} onPress={() => { deleteProperty(propty.id) }}>
 
                                         <Text style={{ color: 'white', fontWeight: 'bold' }}>delete</Text>
                                     </TouchableOpacity>

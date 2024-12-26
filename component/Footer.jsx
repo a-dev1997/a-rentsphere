@@ -36,6 +36,10 @@ const BottomNav = () => {
                         }
                      }} name="Home" component={Home} />
             <Tabs.Screen  options={{
+                headerShown:true,
+                 headerTitleAlign:'center',
+                 headerStyle:{backgroundColor:'#1C183D'},
+                 headerTintColor:'white',
                         tabBarIcon:()=>{
                             return(
                                 <View style={{justifyContent:'center',width:'100%'}}>
@@ -62,6 +66,10 @@ const BottomNav = () => {
                      }} name="Add" component={AddProperty} />
           
             <Tabs.Screen  options={{
+                headerShown:true,
+                headerTitleAlign:'center',
+                headerStyle:{backgroundColor:'#1C183D'},
+                headerTintColor:'white',
                         tabBarIcon:()=>{
                             return(
                                 <View style={{justifyContent:'center'}}>

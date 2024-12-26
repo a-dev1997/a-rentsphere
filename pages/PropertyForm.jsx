@@ -13,7 +13,7 @@ import { fetchUserData } from '../reduxstore/userdataslice';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function PropertyForm() {
-  const navigation = useNavigation();
+  const nav = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch();
   const { data } = useSelector((state) => state.userInfo)
@@ -48,7 +48,7 @@ export default function PropertyForm() {
   const [featureimg, setFeatureImg] = useState(null)
   let [toggal, setToggal] = useState('none')
   let [propdata, setpropData] = useState('block')
-  let [images, setImages] = useState([])
+  const [images, setImages] = useState([])
 
   const validation = () => {
     console.log(propertyName, price, description, phone, feature, address, city, zipcode, bathroom, construction, builtup, maintenance, floor, bedroom, carpet, total, carparking, project, selectedState)
@@ -117,7 +117,13 @@ export default function PropertyForm() {
     //   });
     // });
 
-    formData.append('images', images)
+    images.forEach((image) => {
+      formData.append('images[]', {
+        uri: image.uri,
+        type: image.type,
+        name: image.name,
+      });
+    });
 
     formData.append("feature_image", featureimg[0])
 
@@ -161,7 +167,7 @@ export default function PropertyForm() {
         // 'Content-Type':'application/json',
         'Content-Type': 'multipart/form-data'
       }
-    }).then((res) => res.json()).then((result) => { console.log(result) }).catch((err) => { console.log(err) })
+    }).then((res) => res.json()).then((result) => { console.log(result) }).catch((err) => { console.log(err) }).finally((final)=>{  nav.navigate('bottomtab',{screen:'Profile'})})
 
 
 
