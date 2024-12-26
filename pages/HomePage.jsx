@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet,ActivityIndicator } from "react-native";
+import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet,ActivityIndicator ,Alert} from "react-native";
 
 import Header from "../component/header";
 import { useEffect, useState, useCallback } from "react";
@@ -6,6 +6,8 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData } from "../reduxstore/userdataslice";
 import { checkconnectivity } from "../component/checkConnectivity";
+
+import Pusher from "pusher-js";
 const Home = () => {
     const nav = useNavigation();
     const [user, setUser] = useState('');
@@ -15,7 +17,7 @@ const Home = () => {
     // Initialize wishlist state
     // const [isInWishlist, setisInWishlist] = useState();
     const [wishlistLoading,setWishlistLoading]=useState(false)
-    const [heard, setHeart] = useState();
+    // const [heard, setHeart] = useState();
     const { data, status } = useSelector((state) => state.userInfo);
     // let [name,setName]=useState();
     let [cat, setCat] = useState();
@@ -90,6 +92,19 @@ const Home = () => {
         //    console.log(checkconnectivity());
     }, [data, user])
 
+    useEffect(()=>{
+        var pusher = new Pusher('8f73656210544fae641f', {
+            cluster: 'ap2'
+          });
+      
+          var channel = pusher.subscribe('chat');
+          channel.bind('BroadcastMessages', function(data) {
+           
+           Alert.alert(JSON.stringify(data))
+           
+            
+          });
+    },[])
 
 
     return (
@@ -104,8 +119,11 @@ const Home = () => {
                         <Image source={require('../assets/images/Magnifyingglass.png')} />
                         <Text style={{ color: '#c4c4c4', marginLeft: 5 }}>Find Rooms ,Appartments, PGs,Offices etc...</Text>
 
-                    </TouchableOpacity>
+                    </TouchableOpacity > 
+                    <TouchableOpacity onPress={()=>{nav.navigate('Notification')}}>
                     <Image style={{ height: 20, width: 20 }} source={require('../assets/images/notification.png')} />
+                    </TouchableOpacity>
+                   
                 </View>
 
                 <View style={{ backgroundColor: 'white', marginVertical: 5 }}>
