@@ -8,6 +8,7 @@ import { fetchUserData } from "../reduxstore/userdataslice";
 import { checkconnectivity } from "../component/checkConnectivity";
 
 import Pusher from "pusher-js";
+import { notification } from "../component/Notification";
 const Home = () => {
     const nav = useNavigation();
     const [user, setUser] = useState('');
@@ -100,7 +101,9 @@ const Home = () => {
           var channel = pusher.subscribe('chat');
           channel.bind('BroadcastMessages', function(data) {
            
-           Alert.alert(JSON.stringify(data))
+        //    Alert.alert(JSON.stringify(data))
+           notification(`channel_${data}`,data,data)
+          
            
             
           });

@@ -62,13 +62,14 @@ const handleLogin=async()=>{
         }
         if(result.access_token){
         let a =JSON.stringify({result});
-        storeuser(a)
-        
+        storeuser(a);
+        nav.navigate('bottomtab',{
+            Screen:'Home'
+        });
+        console.log(result)
         }
 
-    }).catch((err)=>console.log(err)).finally((a)=>{setLoading(false),nav.navigate('bottomtab',{
-        Screen:'Home'
-    })})
+    }).catch((err)=>console.log(err)).finally((a)=>{setLoading(false)})
 }
 const checkStorage=async()=>{
    await AsyncStorage.getItem('user').then((res)=>{
