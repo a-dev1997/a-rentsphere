@@ -1,9 +1,12 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import store from "./store";
 
 export const fetchCatData=createAsyncThunk('catdata',async()=>{
+ let c=   store.getState()
+
  let response= await fetch('https://rentsphere.onavinfosolutions.com/api/property-category');
- 
+
  return await response.json()
 })
 

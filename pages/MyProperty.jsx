@@ -8,12 +8,19 @@ const MyProperty = () => {
     const route = useRoute();
     const [list, setList] = useState(null)
     const { id } = route.params;
+    console.log(id)
     let [count,setCount]=useState(1);
     const getMyProp = async () => {
-        await fetch(`https://rentsphere.onavinfosolutions.com/api/my-properties/${id.id}`).then((res) => res.json()).then((result) => { setList(result.data); console.log(result) }).catch((err) => console.log(err))
+        await fetch(`https://rentsphere.onavinfosolutions.com/api/my-properties`,{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${id}`,
+            'Content-Type': 'application/json',
+            }
+        }).then((res) => res.json()).then((result) => { setList(result.data); console.log(result) }).catch((err) => console.log(err))
 
     }
-    const deleteProperty = async (id) => {
+    const deleteProperty = async (prop_id) => {
         // Ask for confirmation
         Alert.alert(
           'Are you sure?',
@@ -29,7 +36,15 @@ const MyProperty = () => {
               onPress: async () => {
                 try {
                   // Proceed with the API call if user confirms
-                  const response = await fetch(`https://rentsphere.onavinfosolutions.com/api/delete-my-property/${id}`);
+                  const response = await fetch(`https://rentsphere.onavinfosolutions.com/api/delete-my-property/${prop_id}`,
+                    {
+                        method:'GET',
+                        headers:{
+                            'Authorization': `Bearer ${id}`,
+                        'Content-Type': 'application/json',
+                        }
+                    }
+                  );
                   const result = await response.json();
                   console.log(result.message);
       
@@ -66,7 +81,7 @@ const MyProperty = () => {
                 } else {
                     return (
 
-                        <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.id }) }} key={propty.id} style={styles.propertyView}>
+                        <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.id ,token:id}) }} key={propty.id} style={styles.propertyView}>
                             {/* <TouchableOpacity onPress={()=>{addWishlist(user,propty.get_property.id)}} style={{position:"absolute",top:20,zIndex:20,right:10}}>
                 <Image  source={require('../assets/images/heartwhite.png')}  />
                 </TouchableOpacity>

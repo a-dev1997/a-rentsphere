@@ -20,30 +20,44 @@ const Home = () => {
     const [wishlistLoading,setWishlistLoading]=useState(false)
     // const [heard, setHeart] = useState();
     const { data, status } = useSelector((state) => state.userInfo);
+    // console.log(data)
     // let [name,setName]=useState();
     let [cat, setCat] = useState();
     const [propery, setPropery] = useState();
     const getProperty = () => {
-        fetch('https://rentsphere.onavinfosolutions.com/api/properties').then((res) => res.json()).then((result) => {
+        fetch('https://rentsphere.onavinfosolutions.com/api/properties',{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${data.result.access_token}`,
+            'Content-Type': 'application/json',
+            }
+        }).then((res) => res.json()).then((result) => {
             setPropery(result)
 
-
-        }).catch((err) => console.log(err))
+                // console.log(result)
+        }).catch((err) => console.log('this is error'+err))
     }
     const getCategory = async () => {
-        await fetch('https://rentsphere.onavinfosolutions.com/api/property-category').then((res) => res.json()).then((result) => {
+        await fetch('https://rentsphere.onavinfosolutions.com/api/property-category',{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${data.result.access_token}`,
+            'Content-Type': 'application/json',
+            }
+        }).then((res) => res.json()).then((result) => {
             setCat(result.data)
             //  console.log(result)
             //  console.log(cat)
         })
     }
 
-    const addWishlist = async (id, prop) => {
+    const addWishlist = async ( prop) => {
 
         await fetch('https://rentsphere.onavinfosolutions.com/api/post-wishlist', {
             method: 'POST',
-            body: JSON.stringify({ user_id: id, property_id: prop }),
+            body: JSON.stringify({ property_id: prop }),
             headers: {
+                'Authorization': `Bearer ${data.result.access_token}`,
                 'Content-Type': 'application/json'
             }
         }).then((res) => res.json()).then((resutl) => { setCount(count + 1) }).catch((err) => { console.log(err) })
@@ -63,17 +77,30 @@ const Home = () => {
         // console.log(user_id)
 
         // Sending the POST request with the user_id wrapped in a JSON object
-        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist/${user_id}`).then((res) => res.json()).then((result) => { setList(result.data); }).catch((err) => console.log(err))
+        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist`,{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${data.result.access_token}`,
+            'Content-Type': 'application/json',
+            }
+        }).then((res) => res.json()).then((result) => { setList(result.data); }).catch((err) => console.log(err))
     }
-    const removeProperty = async (property_id, user_id) => {
-        await fetch(`https://rentsphere.onavinfosolutions.com/api/remove-property/${property_id}/${user_id}`).then((res) => res.json()).then((result) => { setCount(count + 1) }).catch((err) => console.log(err))
+    const removeProperty = async (property_id) => {
+        await fetch(`https://rentsphere.onavinfosolutions.com/api/remove-property/${property_id}`,{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${data.result.access_token}`,
+            'Content-Type': 'application/json',
+            }
+        }).then((res) => res.json()).then((result) => { setCount(count + 1) }).catch((err) => console.log(err))
     }
 
     // console.log(wishlistMatch());
     useFocusEffect(
+        
         useCallback(() => {
-            getProperty()
-            getCategory()
+            checkconnectivity()
+            
             dispatch(fetchUserData());
 
         }, [count]) // Callback ensures this runs only on focus
@@ -81,16 +108,20 @@ const Home = () => {
 
     useEffect(() => {
         if (status === "succeeded" && data?.result?.data) {
-
+            getCategory()
+            getProperty()
+          
             // console.log(data.result.data.id)
             setUser(data.result.data.id);
             //  console.log(user)
             // Update user state when data is successfully fetched
             getList(user)
-            console.log(list)
+            // console.log(list)
+          
+           
         }
-
-        //    console.log(checkconnectivity());
+     
+          
     }, [data, user])
 
     useEffect(()=>{
@@ -98,15 +129,20 @@ const Home = () => {
             cluster: 'ap2'
           });
       
-          var channel = pusher.subscribe('chat');
-          channel.bind('BroadcastMessages', function(data) {
+        //   var channel = pusher.subscribe('chat');
+        //   channel.bind('BroadcastMessages', function(data) {
            
-        //    Alert.alert(JSON.stringify(data))
-           notification(`channel_${data}`,data,data)
+        // //    Alert.alert(JSON.stringify(data))
+        //    notification(data,data,data)
           
            
             
-          });
+        //   });
+          var applychannel=pusher.subscribe('apply.'+data.result.data.id);
+          applychannel.bind('ApplyNotifications',function(event){
+           console.log(event)
+          })
+         
     },[])
 
 
@@ -185,11 +221,11 @@ const Home = () => {
                             setWishlistLoading(prevState => ({ ...prevState, [propertyId]: true }));
 
                             if (isInWishlist) {
-                                removeProperty(propertyId, user).finally(() => {
+                                removeProperty(propertyId).finally(() => {
                                     setWishlistLoading(prevState => ({ ...prevState, [propertyId]: false }));
                                 });
                             } else {
-                                addWishlist(user, propertyId).finally(() => {
+                                addWishlist( propertyId).finally(() => {
                                     setWishlistLoading(prevState => ({ ...prevState, [propertyId]: false }));
                                 });
                             }

@@ -9,15 +9,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const EditProfile = () => {
     const nav = useNavigation();
     const route = useRoute();
-    let [user, setUser] = useState();
+    // let [user, setUser] = useState();
     let [name, setname] = useState()
-
+    console.log(name)
     let [phone, setPhone] = useState();
     let [address, setAddress] = useState();
     let [city, setCity] = useState();
     const [selectedOption, setSelectedOption] = useState();
     let [state, setState] = useState();
-    const { data } = route.params;
+    const { data,token } = route.params;
+    console.log(token)
     const [file, setFile] = useState(null);
     const [isloading,setLoading]=useState(false)
 
@@ -44,10 +45,14 @@ const EditProfile = () => {
         if (file!=null) {
             const formImg = new FormData();
             formImg.append('profile_image', file[0]);
-            formImg.append('email', user.email)
+          
          await fetch('https://rentsphere.onavinfosolutions.com/api/profile-pic-update', {
                 method: 'post',
                 body: formImg,
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                }
             }).then((res) => res.json()).then((result) => console.log(result)).finally((final) =>{})
 
             const formData = new FormData();
@@ -60,11 +65,15 @@ const EditProfile = () => {
             formData.append('address', address);
             formData.append('city', city);
             formData.append('state', state)
-            formData.append('email', user.email)
+          
     
            await fetch('https://rentsphere.onavinfosolutions.com/api/update-profile', {
                 method: 'post',
                 body: formData,
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                
+                }
             }).then((res) => res.json()).then((result) => console.log(result)).finally((final) => {
                nav.goBack()
             })
@@ -80,13 +89,18 @@ const EditProfile = () => {
             formData.append('address', address);
             formData.append('city', city);
             formData.append('state', state)
-            formData.append('email', user.email)
+            // formData.append('email', user.email)
     
            await fetch('https://rentsphere.onavinfosolutions.com/api/update-profile', {
                 method: 'post',
                 body: formData,
-            }).then((res) => res.json()).then((result) => console.log(result)).finally((final) => {
-               nav.goBack()
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                
+                }
+            }).then((res)=>res.json()).then((result)=>console.log('lfd'+result)).catch((err)=>console.log(err)).finally((final) => {
+           nav.goBack()
+            setLoading(false)
             })
         }
 
@@ -99,7 +113,7 @@ const EditProfile = () => {
     }
 
 useEffect(() => {
-    setUser(data)
+   
     setname(data.name)
 
     setPhone(data.phone)
@@ -108,15 +122,15 @@ useEffect(() => {
     setSelectedOption(data.gender)
     setCity(data.city)
     setState(data.state)
-    console.log(data)
+  
     
-}, [user])
+}, [data])
 return (
     <ScrollView style={{ padding: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => { pickDocument() }}>
                 {
-                    file == null ? <Image style={{ height: 100, width: 100, borderRadius: 50 }} source={user ? { uri: `https://rentsphere.onavinfosolutions.com/public/${user.profile_img}` } : ''} /> : <Image style={{ height: 100, width: 100, borderRadius: 50 }} source={{ uri: file[0].uri }} />
+                    file == null ? <Image style={{ height: 100, width: 100, borderRadius: 50 }} source={data ? { uri: `https://rentsphere.onavinfosolutions.com/public/${data.profile_img}` } : ''} /> : <Image style={{ height: 100, width: 100, borderRadius: 50 }} source={{ uri: file[0].uri }} />
                 }
 
 
@@ -124,7 +138,7 @@ return (
             {/* <Text>
                     {user?user.name:''}
                 </Text> */}
-            <TextInput onChangeText={(text) => { setname(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '70%' }} value={user ? name : ''} />
+            <TextInput onChangeText={(text) => { setname(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '70%' }} value={data ? name : ''} />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 30 }}>
             <View style={styles.container}>
@@ -144,20 +158,20 @@ return (
             {/* <Text>
                     {user?user.name:''}
                 </Text> */}
-            <TextInput keyboardType="numeric" onChangeText={(text) => { setPhone(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={user ? phone : ''} placeholder="enter phone no." />
+            <TextInput keyboardType="numeric" onChangeText={(text) => { setPhone(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={data!='' ? phone?.toString() : ''} placeholder="enter phone no." />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 30 }}>
-            <TextInput onChangeText={(text) => { setCity(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={user ? city : ''} placeholder="ender city" />
+            <TextInput onChangeText={(text) => { setCity(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={data ? city : ''} placeholder="ender city" />
             {/* <Text>
                     {user?user.name:''}
                 </Text> */}
-            <TextInput onChangeText={(text) => { setAddress(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={user ? address : ''} />
+            <TextInput onChangeText={(text) => { setAddress(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={data ? address : ''} />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 30 }}>
             {/* <Text>
                     {user?user.name:''}
                 </Text> */}
-            <TextInput onChangeText={(text) => { setState(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={user ? state : ''} />
+            <TextInput onChangeText={(text) => { setState(text) }} style={{ borderBottomColor: 'black', borderBottomWidth: 2, width: '40%' }} value={data ? state : ''} />
         </View>
         <TouchableOpacity onPress={uploadHandle} style={{ backgroundColor: '#1C183D', paddingVertical: 10, borderRadius: 10, marginVertical: 20 }}>
         {

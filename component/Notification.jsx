@@ -28,7 +28,7 @@ export  const notification = (channel_id,title,message) => {
           autoCancel: true,
           largeIcon: "ic_launcher",  // You can customize the icon if needed
           smallIcon: "ic_notification", // Customize the notification icon if needed
-          title: title,
+          title: 'notification',
           message: message,
           playSound: true,
           soundName: "default",

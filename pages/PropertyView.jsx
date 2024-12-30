@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { ScrollView, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native"
-
+import { useSelector } from "react-redux";
 
 const PropertyView=({route})=>{
     let [isloading, setLoading] = useState(true)
-    const { id } = route.params;
+    const { id,token } = route.params;
+    
     let [datas, setdata] = useState()
     let [images,setImages]= useState([])
     let [count,setCount]=useState(0)
@@ -13,6 +14,7 @@ const PropertyView=({route})=>{
             method: 'post',
             body: JSON.stringify({ id }),
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         }).then((res) => res.json()).then((result) => {

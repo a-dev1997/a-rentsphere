@@ -18,8 +18,14 @@ const Profile = () => {
       nav.navigate("Login");
     }
   };
- const getUserData=async(id)=>{
-  await fetch(`https://rentsphere.onavinfosolutions.com/api/profile-data/${id}`).then((res)=>res.json()).then((result)=>{setUser(result.data)})
+ const getUserData=async()=>{
+  await fetch(`https://rentsphere.onavinfosolutions.com/api/profile-data`,{
+    method:'GET',
+    headers:{
+        'Authorization': `Bearer ${data.result.access_token}`,
+    'Content-Type': 'application/json',
+    }
+}).then((res)=>res.json()).then((result)=>{setUser(result.data)})
  }
   const check=async()=>{
     await AsyncStorage.getItem('user').then((res)=>console.log(res))
@@ -51,6 +57,7 @@ const Profile = () => {
     if (status === "succeeded" && data?.result?.data) {
       getUserData(data.result.data.id)
       
+      
       // setUser(data.result.data); // Update user state when data is successfully fetched
     }
   }, [status, data]); // Re-run effect when `status` or `data` changes
@@ -78,7 +85,7 @@ const Profile = () => {
           marginVertical: 30,
         }}
         onPress={() => {
-          nav.navigate("Edit Profile", { data: user });
+          nav.navigate("Edit Profile", { data: user,token:data.result.access_token });
         }}
       >
         <Text
@@ -106,14 +113,14 @@ const Profile = () => {
           alignItems: "center",
           justifyContent: "space-between",
         }}
-        onPress={()=>{nav.navigate('Wishlist',{id:user})}}
+        onPress={()=>{nav.navigate('Wishlist',{id:data.result.access_token})}}
       >
         <Image source={require("../assets/images/heartblack.png")} />
         <Text>My Favourite</Text>
         <Image source={require("../assets/images/arrow.png")} />
       </TouchableOpacity>
       <TouchableOpacity
-      onPress={()=>{nav.navigate('My Property',{id:user})}}
+      onPress={()=>{nav.navigate('My Property',{id:data.result.access_token})}}
         style={{
           borderTopColor: "grey",
           backgroundColor: "white",

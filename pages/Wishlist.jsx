@@ -11,17 +11,33 @@ const Wishlist=()=>{
     let [count,setCount]=useState(1);
     const getList = async () => {
         // Assuming `id` is defined somewhere and contains an `id` property
-        let user_id = id.id;
+        
     
         // Logging for debugging purposes
-        console.log(user_id)
+        
     
         // Sending the POST request with the user_id wrapped in a JSON object
-        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist/${user_id}`).then((res)=>res.json()).then((result)=>{setList(result.data),console.log(result)}).catch((err)=>console.log(err))
+        let a = await fetch(`https://rentsphere.onavinfosolutions.com/api/get-wishlist`,
+            {
+                method:'GET',
+                headers:{
+                    'Authorization': `Bearer ${id}`,
+                'Content-Type': 'application/json',
+                }
+            }
+        ).then((res)=>res.json()).then((result)=>{setList(result.data),console.log(result)}).catch((err)=>console.log(err))
     }
 
     const removeProperty=async(property_id)=>{
-        await fetch(`https://rentsphere.onavinfosolutions.com/api/remove-property/${property_id}/${id.id}`).then((res)=>res.json()).then((result)=>{setCount(count+1)}).catch((err)=>console.log(err))
+        await fetch(`https://rentsphere.onavinfosolutions.com/api/remove-property/${property_id}`,
+            {
+                method:'GET',
+                headers:{
+                    'Authorization': `Bearer ${id}`,
+                'Content-Type': 'application/json',
+                }
+            }
+        ).then((res)=>res.json()).then((result)=>{setCount(count+1)}).catch((err)=>console.log(err))
     }
 
 useEffect(()=>{
@@ -45,7 +61,7 @@ getList()
                 }else{
             return(
 
-                <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.get_property.id }) }} key={propty.get_property.id} style={styles.propertyView}>
+                <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.get_property.id ,token:id}) }} key={propty.get_property.id} style={styles.propertyView}>
                 {/* <TouchableOpacity onPress={()=>{addWishlist(user,propty.get_property.id)}} style={{position:"absolute",top:20,zIndex:20,right:10}}>
                 <Image  source={require('../assets/images/heartwhite.png')}  />
                 </TouchableOpacity>
