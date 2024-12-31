@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 const PropertyView=({route})=>{
     let [isloading, setLoading] = useState(true)
     const { id,token } = route.params;
-    
-    let [datas, setdata] = useState()
+    console.log(token)
+    let [datas, setdata] = useState(null)
     let [images,setImages]= useState([])
     let [count,setCount]=useState(0)
     const getProperty = () => {
@@ -14,20 +14,31 @@ const PropertyView=({route})=>{
             method: 'post',
             body: JSON.stringify({ id }),
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token.result.access_token}`,
                 'Content-Type': 'application/json'
             }
         }).then((res) => res.json()).then((result) => {
             setdata(result.data)
            setImages(result.data.images.split(","))
-         console.log(datas.feature_image)
+         console.log(datas)
             
-        }).finally((final) => setLoading(false))
+        }).finally((final) => setLoading(false)).catch((err)=>console.log(err))
+    }
+
+    const applyProperty=async(receiver_id)=>{
+        await fetch('http://localhost/rentsphere/api/apply-notification',{
+            method:'post',
+            body:JSON.stringify({receiver:receiver_id}),
+            headers: {
+                'Authorization': `Bearer ${token}`,
+       
+            }
+        }).then((res))
     }
     useEffect(() => {
         getProperty()
     }, [])
-    if (isloading == true) {
+    if (isloading == true && datas==null) {
         return (
             <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                 <ActivityIndicator size="large" color="#1C183D" />
@@ -105,8 +116,8 @@ const PropertyView=({route})=>{
                             <TouchableOpacity style={{backgroundColor:"#1C183D",paddingHorizontal:40,paddingVertical:20,borderRadius:20}}>
                                 <Text style={{color:'white',fontWeight:'bold'}}>Call</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{backgroundColor:"#1C183D",paddingHorizontal:40,paddingVertical:20,borderRadius:20}}>
-                                <Text style={{color:'white',fontWeight:'bold'}}>Chat</Text>
+                            <TouchableOpacity onPress={()=>{applyProperty(datas.user_id)}} style={{backgroundColor:"#1C183D",paddingHorizontal:40,paddingVertical:20,borderRadius:20}}>
+                                <Text style={{color:'white',fontWeight:'bold'}}>Apply</Text>
                             </TouchableOpacity>
                         </View>
                 </View>

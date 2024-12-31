@@ -6,11 +6,12 @@ import PushNotification,{Importance} from 'react-native-push-notification'
 
 export  const notification = (channel_id,title,message) => {
 
+  
     if (Platform.OS === 'android') {
       // Create default notification channel
       PushNotification.createChannel(
         {
-          channelId: channel_id, // Unique ID for the channel
+          channelId: 'channel_id'+channel_id, // Unique ID for the channel
           channelName: 'Default Notifications', // Name of the channel
           channelDescription: 'A channel for default notifications', // Description of the channel
           playSound: true,
@@ -23,12 +24,12 @@ export  const notification = (channel_id,title,message) => {
 
       
       PushNotification.localNotification({
-        channelId: channel_id, // Use the channel ID defined above
+        channelId: 'channel_id'+channel_id, // Use the channel ID defined above
           ticker: "My Notification Ticker",
           autoCancel: true,
           largeIcon: "ic_launcher",  // You can customize the icon if needed
           smallIcon: "ic_notification", // Customize the notification icon if needed
-          title: 'notification',
+          title: title,
           message: message,
           playSound: true,
           soundName: "default",
@@ -39,6 +40,11 @@ export  const notification = (channel_id,title,message) => {
           number: 10, // 
       })
      
+      PushNotification.channelExists('channel_id'+channel_id, function (exists) {
+        console.log(exists); // true/false
+      });
+      
+    
     }
 
 

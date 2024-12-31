@@ -1,5 +1,5 @@
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import { Text } from "react-native";
+import { Text,Alert } from "react-native";
 
 import SplashScreen from "./pages/SplashScreen";
 import { NavigationContainer,useNavigation } from "@react-navigation/native";
@@ -11,7 +11,8 @@ import Login from './pages/LoginPage';
 import Header from './component/header';
 import { Provider } from 'react-redux';
 import store from './reduxstore/store';
-
+import Pusher from 'pusher-js';
+import { useEffect } from 'react';
 import EditProfile from './pages/EditProfile';
 import PropertyForm from './pages/PropertyForm';
 import Wishlist from './pages/Wishlist';
@@ -19,10 +20,13 @@ import MyProperty from './pages/MyProperty';
 import UpdateProperty from './pages/UpdateProperty';
 import Message from './pages/MessagePage';
 import Notification from './pages/NotificationPage';
+import { notification } from './component/Notification';
 
 
 const App=()=>{
+ useEffect(()=>{
 
+ },[])
 
   return(
     

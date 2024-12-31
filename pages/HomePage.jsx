@@ -20,7 +20,7 @@ const Home = () => {
     const [wishlistLoading,setWishlistLoading]=useState(false)
     // const [heard, setHeart] = useState();
     const { data, status } = useSelector((state) => state.userInfo);
-    // console.log(data)
+    console.log(data)
     // let [name,setName]=useState();
     let [cat, setCat] = useState();
     const [propery, setPropery] = useState();
@@ -138,13 +138,16 @@ const Home = () => {
            
             
         //   });
+      
           var applychannel=pusher.subscribe('apply.'+data.result.data.id);
-          applychannel.bind('ApplyNotifications',function(event){
+          applychannel.bind('ApplyNotify',function(event){
            console.log(event)
+           notification(event.sender,event.title,event.message)
+           
           })
-         
-    },[])
-
+       
+    },[0])
+ if(data.result){
 
     return (
 
@@ -232,7 +235,7 @@ const Home = () => {
                         };
 
                         return (
-                            <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.id }) }} key={propty.id} style={styles.propertyView}>
+                            <TouchableOpacity onPress={() => { nav.navigate('Property', { id: propty.id ,token:data}) }} key={propty.id} style={styles.propertyView}>
 
 
                                 <TouchableOpacity
@@ -268,6 +271,11 @@ const Home = () => {
             </TouchableOpacity> */}
         </ScrollView>
     )
+}else{
+    return(
+        <Text>Loading</Text>
+    )
+}
 }
 
 export default Home;
