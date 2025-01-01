@@ -24,9 +24,7 @@ import { notification } from './component/Notification';
 
 
 const App=()=>{
- useEffect(()=>{
 
- },[])
 
   return(
     

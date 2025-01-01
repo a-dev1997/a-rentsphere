@@ -20,7 +20,7 @@ const Home = () => {
     const [wishlistLoading,setWishlistLoading]=useState(false)
     // const [heard, setHeart] = useState();
     const { data, status } = useSelector((state) => state.userInfo);
-    console.log(data)
+    // console.log(data)
     // let [name,setName]=useState();
     let [cat, setCat] = useState();
     const [propery, setPropery] = useState();
@@ -95,6 +95,11 @@ const Home = () => {
         }).then((res) => res.json()).then((result) => { setCount(count + 1) }).catch((err) => console.log(err))
     }
 
+    const notify=async()=>{
+        console.log('kjfkd');
+        await fetch('http://localhost/rentsphere/api/notifications').then((res)=>res.json()).then((result)=>console.log(result))
+    }
+
     // console.log(wishlistMatch());
     useFocusEffect(
         
@@ -105,12 +110,12 @@ const Home = () => {
 
         }, [count]) // Callback ensures this runs only on focus
     );
-
+   
     useEffect(() => {
         if (status === "succeeded" && data?.result?.data) {
             getCategory()
             getProperty()
-          
+            notify()
             // console.log(data.result.data.id)
             setUser(data.result.data.id);
             //  console.log(user)
