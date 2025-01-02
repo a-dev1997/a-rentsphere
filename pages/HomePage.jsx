@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet,ActivityIndicator ,Alert} from "react-native";
+import { ScrollView, View, Text, Image, TouchableOpacity, StyleSheet,ActivityIndicator ,Alert, Button} from "react-native";
 
 import Header from "../component/header";
 import { useEffect, useState, useCallback } from "react";
@@ -96,8 +96,13 @@ const Home = () => {
     }
 
     const notify=async()=>{
-        console.log('kjfkd');
-        await fetch('http://localhost/rentsphere/api/notifications').then((res)=>res.json()).then((result)=>console.log(result))
+        console.log(data.result.access_token);
+        await fetch('https://rentsphere.onavinfosolutions.com/api/notifications',{
+            method:'GET',
+            headers:{
+                'Authorization': `Bearer ${data.result.access_token}`,
+            }
+        }).then((res)=>res.json()).then((result)=>console.log(result)).catch((err)=>console.log(err))
     }
 
     // console.log(wishlistMatch());
@@ -158,7 +163,7 @@ const Home = () => {
 
         <ScrollView>
 
-
+            <Button title="kfjdkj"  onPress={()=>{notify()}} />
             <View style={{ backgroundColor: '#c4c4c4', paddingVertical: 5, }}>
                 <View style={{ flexDirection: "row", justifyContent: 'center', alignItems: "center" }}>
                     <TouchableOpacity style={{ backgroundColor: 'white', marginHorizontal: 10, marginVertical: 10, borderColor: 'black', borderWidth: 1, borderRadius: 5, paddingHorizontal: 2, paddingVertical: 5, width: '85%', flexDirection: "row", alignItems: 'center' }}>
